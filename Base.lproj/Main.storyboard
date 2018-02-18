@@ -105,6 +105,9 @@
                                     <constraint firstAttribute="height" constant="44" id="kEm-xw-JfQ"/>
                                 </constraints>
                                 <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="7aW-KX-XnR" id="9uK-9K-5CK"/>
+                                </connections>
                             </searchBar>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="OMq-Da-Pko">
                                 <rect key="frame" x="0.0" y="108" width="375" height="510"/>
@@ -125,6 +128,10 @@
                                         </view>
                                     </collectionViewCell>
                                 </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="7aW-KX-XnR" id="DiO-oF-Lm4"/>
+                                    <outlet property="delegate" destination="7aW-KX-XnR" id="LKA-7N-Qm7"/>
+                                </connections>
                             </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

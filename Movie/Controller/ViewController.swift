@@ -103,6 +103,9 @@ class ViewController: UIViewController {
             movie1.popularity > movie2.popularity
         }
         movieCollectionView.reloadData()
+        let indexPath = IndexPath(row: 0, section: 0)
+        movieCollectionView.scrollToItem(at: indexPath, at: .top, animated: true)
+
     }
     
     func sortByHighestRate(){
@@ -110,6 +113,8 @@ class ViewController: UIViewController {
             movie1.vote_average > movie2.vote_average
         }
         movieCollectionView.reloadData()
+        let indexPath = IndexPath(row: 0, section: 0)
+        movieCollectionView.scrollToItem(at: indexPath, at: .top, animated: true)
     }
 
 

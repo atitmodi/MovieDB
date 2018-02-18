@@ -53,8 +53,15 @@
                             <constraint firstItem="4Ji-m5-hbw" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="qtH-Ud-PeZ"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="MOVIES" id="Uer-9b-W6I"/>
+                    <navigationItem key="navigationItem" title="MOVIES" id="Uer-9b-W6I">
+                        <barButtonItem key="rightBarButtonItem" title="Filter" id="3Zn-Jo-DcR">
+                            <connections>
+                                <action selector="filterButtonPressed:" destination="BYZ-38-t0r" id="Dh2-P7-9fQ"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="filterBarButton" destination="3Zn-Jo-DcR" id="aWZ-Ym-z4d"/>
                         <outlet property="movieCollectionView" destination="4Ji-m5-hbw" id="vIY-B4-rBK"/>
                     </connections>
                 </viewController>

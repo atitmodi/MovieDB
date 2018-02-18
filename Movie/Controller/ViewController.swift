@@ -12,6 +12,8 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var movieCollectionView: UICollectionView!
     
+    @IBOutlet weak var filterBarButton: UIBarButtonItem!
+    
     var movieModel = [MovieModel]()
     var loader = UIActivityIndicatorView()
 
@@ -60,6 +62,54 @@ class ViewController: UIViewController {
     {
         loader.stopAnimating()
         loader.removeFromSuperview()
+    }
+
+
+    @IBAction func filterButtonPressed(_ sender: Any) {
+        
+        presentActionSheet()
+        
+    }
+    
+    // MARK:- Action Sheet For Filter
+    func presentActionSheet(){
+        
+        let optionMenu = UIAlertController(title: nil, message: "Sort By", preferredStyle: .actionSheet)
+        optionMenu.view.backgroundColor = UIColor.black
+        optionMenu.view.tintColor   = UIColor.black
+        
+        let popularityAction = UIAlertAction(title: "Popularity", style: .default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.sortByPopularity()
+        })
+        let ratingsAction = UIAlertAction(title: "Highest Rated", style: .default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.sortByHighestRate()
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive, handler: {
+            (alert: UIAlertAction!) -> Void in
+            
+        })
+        
+        optionMenu.addAction(popularityAction)
+        optionMenu.addAction(ratingsAction)
+        optionMenu.addAction(cancelAction)
+        self.present(optionMenu, animated: true, completion: nil)
+    }
+    
+    // MARK:- Sorting Functions
+    func sortByPopularity(){
+        movieModel.sort { (movie1, movie2) -> Bool in
+            movie1.popularity > movie2.popularity
+        }
+        movieCollectionView.reloadData()
+    }
+    
+    func sortByHighestRate(){
+        movieModel.sort { (movie1, movie2) -> Bool in
+            movie1.vote_average > movie2.vote_average
+        }
+        movieCollectionView.reloadData()
     }
 
 

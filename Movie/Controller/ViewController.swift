@@ -11,9 +11,15 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var movieCollectionView: UICollectionView!
+    var movieModel = [MovieModel]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+     
+        let parser = MoviePresenter(delgate: self)
+        parser.getPopularMovies()
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -24,3 +30,17 @@ class ViewController: UIViewController {
 
 }
 
+extension ViewController : MoviePresenterDelegate{
+    
+    func onSuccessCallBack(model: [MovieModel]) {
+        
+        if(!model.isEmpty){
+            
+            movieModel = model
+            print(movieModel.count)
+            // Update UI
+       
+        }
+    }
+    
+}

@@ -11,6 +11,7 @@ import UIKit
 protocol MoviePresenterDelegate {
     
     func onSuccessCallBack(model : [MovieModel])
+    func onError()
 }
 
 class MoviePresenter: NSObject {
@@ -38,8 +39,22 @@ class MoviePresenter: NSObject {
             do{
                 if(error != nil)
                 {
-                    print("error is \(error)")
+                    //print("error is \(error)")
+                    
+                    CommonClass().showAlertView(errorMessage: error?.localizedDescription ?? "")
+                    self.errorDelegate()
                     return
+                    
+                }
+                if let httpResponse = response as? HTTPURLResponse {
+                    
+                    if(httpResponse.statusCode != 200){
+                        CommonClass().showAlertView(errorMessage: "\(httpResponse.statusCode)")
+                        self.errorDelegate()
+
+                        return
+
+                    }
                 }
                 if let data = data{
                 
@@ -52,10 +67,8 @@ class MoviePresenter: NSObject {
                         
                         if let delegate = self.delegate{
                             
-                            DispatchQueue.main.async {
                                 delegate.onSuccessCallBack(model: self.movies)
 
-                            }
                         }
                         /*self.movies.forEach({ (movies) in
                             print(movies.title)
@@ -71,5 +84,14 @@ class MoviePresenter: NSObject {
         }.resume()
         
     }
+    
+    func errorDelegate()
+    {
+        if let delegate = self.delegate{
+            
+            delegate.onError()
+        }
+    }
+
     
 }

@@ -12,32 +12,36 @@ class SearchViewController: UIViewController {
     
     var loader = UIActivityIndicatorView()
     
+    // array to hold the model data
     var movieModel = [MovieModel]()
     
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var searchCollectionView: UICollectionView!
+    
     var searchPresenter : SearchMoviePresenter?
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         layoutCollectionView()
         searchPresenter = SearchMoviePresenter(delgate: self)
     }
-
+    
     func layoutCollectionView(){
         
         searchCollectionView.register(UINib(nibName:"MovieCell", bundle: nil), forCellWithReuseIdentifier: "movieCell")
         
         searchCollectionView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5)
+        
+        //setting collection view layout according to size of the screen
         let layout = searchCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
         let itemSizeWidth = (view.frame.size.width - 30) / 3
         let itemSizeHeight = (view.frame.size.height - 20) / 3
         layout.itemSize = CGSize(width: itemSizeWidth, height: itemSizeHeight)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -57,25 +61,44 @@ class SearchViewController: UIViewController {
         loader.stopAnimating()
         loader.removeFromSuperview()
     }
-
     
-
-    /*
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+        searchBar.resignFirstResponder()
+        searchBar.text = ""
+        
+    }
+    
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        
+        if segue.identifier == "DetailScreen" {
+            
+            if let dest = segue.destination as? DetailScreenViewController,
+                let index = sender as? IndexPath{
+                dest.model = movieModel[index.row]
+            }
+            
+        }
+        
     }
-    */
-
+    
+    
 }
+
+// MARK:- UICollectionView  Delegate and DataSource
+
 extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource
 {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "movieCell", for: indexPath) as! MovieCollectionViewCell        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "movieCell", for: indexPath) as! MovieCollectionViewCell
         cell.model = movieModel[indexPath.row]
         return cell
         
@@ -85,7 +108,14 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         return movieModel.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        performSegue(withIdentifier: "DetailScreen", sender: indexPath)
+    }
+    
 }
+
+// MARK:- UISearchBarDelegate  Delegate
 
 extension SearchViewController : UISearchBarDelegate
 {
@@ -97,11 +127,19 @@ extension SearchViewController : UISearchBarDelegate
         }
         
     }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
 }
+
+// MARK:-  Parser Delegate
 
 extension SearchViewController : SearchMoviePresenterDelegate
 {
     func onError() {
+        
+        //updating UI in mai thread
         
         DispatchQueue.main.async {
             self.dismissActivityLoader()
@@ -111,18 +149,19 @@ extension SearchViewController : SearchMoviePresenterDelegate
     
     func onSuccessCallBack(model: [MovieModel]) {
         
-            movieModel = model
+        movieModel = model
         
-            DispatchQueue.main.async {
-                
-                self.dismissActivityLoader()
-                self.searchCollectionView.reloadData()
-                
-            }
+        //updating UI in mai thread
+        DispatchQueue.main.async {
+            
+            self.dismissActivityLoader()
+            self.searchCollectionView.reloadData()
+            
+        }
         
     }
     
-
-
+    
+    
 }
 

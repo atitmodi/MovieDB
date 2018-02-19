@@ -63,10 +63,13 @@ class MoviePresenter: NSObject {
                 if let dic = jsonDictionary
                 {
                     if let moviesDict = dic["results"] as? [JSONDictionary]{
+                        
+                        //Binding downloaded data to model
                         self.movies = moviesDict.flatMap(MovieModel.init)
                         
                         if let delegate = self.delegate{
                             
+                            //passing data to controller
                                 delegate.onSuccessCallBack(model: self.movies)
 
                         }
@@ -78,7 +81,6 @@ class MoviePresenter: NSObject {
             }
             }
             catch{
-                print("error error")
                 print(error)
             }
         }.resume()

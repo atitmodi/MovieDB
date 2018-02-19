@@ -14,33 +14,52 @@ class DetailScreenViewController: UIViewController {
     
     @IBOutlet weak var synopsis: UILabel!
     var model : MovieModel?
+    @IBOutlet weak var movieTitle: UILabel!
     
+    @IBOutlet weak var releaseDate: UILabel!
+    @IBOutlet weak var rating: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        print("viewDidLoad")
-        print(model?.title)
-        synopsis.text = model?.overview ?? ""
-        posterImageView.loadImageUsingUrlString((model?.poster_path)!)
+        setLayout()
         
         // Do any additional setup after loading the view.
     }
+    
+    func setLayout(){
+        
+        if let model = model{
+            
+            movieTitle.text = model.title
+            synopsis.text = model.overview
+            posterImageView.loadImageUsingUrlString((model.poster_path))
+            releaseDate.text = formatDate(dateString: model.release_date)
+            rating.text = "\(model.vote_average)/10(\(model.vote_count) votes)"
+        }
+        
+    }
+    
+    func formatDate(dateString : String) -> String{
+        
+        let dateFormatterGet = DateFormatter()
+        dateFormatterGet.dateFormat = "yyyy-MM-dd"
+        
+        let dateFormatterSet = DateFormatter()
+        dateFormatterSet.dateFormat = "MMMM dd,yyyy"
+        
+        if let date: NSDate? = dateFormatterGet.date(from: dateString) as NSDate??
+        {
+            return dateFormatterSet.string(from: date! as Date)
+        }
+        
+        return ""
+    }
+
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

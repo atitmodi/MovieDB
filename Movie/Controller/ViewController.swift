@@ -9,14 +9,23 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var movieCollectionView: UICollectionView!
     
     @IBOutlet weak var filterBarButton: UIBarButtonItem!
     
+    // array to hold the model data
     var movieModel = [MovieModel]()
+    
     var loader = UIActivityIndicatorView()
-
+    
+    // variables for pagination feature
+    var currentPage = 1
+    var isLoading = false
+    
+    
+    var parser : MoviePresenter?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -25,8 +34,11 @@ class ViewController: UIViewController {
         getPopularMovies()
     }
     
+    
     func layoutCollectionView()
     {
+        //setting collection view layout according to size of the screen
+
         movieCollectionView.register(UINib(nibName:"MovieCell", bundle: nil), forCellWithReuseIdentifier: "movieCell")
         movieCollectionView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5)
         let layout = movieCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
@@ -38,12 +50,11 @@ class ViewController: UIViewController {
     
     func getPopularMovies()
     {
-       
         showActivityLoader()
-        let parser = MoviePresenter(delgate: self)
-        parser.getPopularMovies()
+        parser = MoviePresenter(delgate: self)
+        parser?.getPopularMovies()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -63,8 +74,8 @@ class ViewController: UIViewController {
         loader.stopAnimating()
         loader.removeFromSuperview()
     }
-
-
+    
+    
     @IBAction func filterButtonPressed(_ sender: Any) {
         
         presentActionSheet()
@@ -105,7 +116,7 @@ class ViewController: UIViewController {
         movieCollectionView.reloadData()
         let indexPath = IndexPath(row: 0, section: 0)
         movieCollectionView.scrollToItem(at: indexPath, at: .top, animated: true)
-
+        
     }
     
     func sortByHighestRate(){
@@ -116,9 +127,21 @@ class ViewController: UIViewController {
         let indexPath = IndexPath(row: 0, section: 0)
         movieCollectionView.scrollToItem(at: indexPath, at: .top, animated: true)
     }
-
-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "DetailScreen" {
+            if let dest = segue.destination as? DetailScreenViewController,
+                let index = sender as? IndexPath {
+                dest.model = movieModel[index.row]
+            }
+        }
+    }
+    
+    
+    
 }
+
+// MARK:- UICollectionView  Delegate and DataSource
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource
 {
@@ -134,22 +157,46 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource
         return movieModel.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        performSegue(withIdentifier: "DetailScreen", sender: indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        // print(indexPath,currentPage,movieModel.count)
+        
+        // pagination feature implemented, checking array of model count against indexpath
+        if(indexPath.row == movieModel.count - 1 && !isLoading){
+            
+            isLoading = true
+            currentPage += 1
+            if let parser = parser{
+                
+                showActivityLoader()
+                parser.getPopularMovies(currentPage: currentPage)
+            }
+        }
+    }
+    
 }
+
+// MARK:-  Parser Delegate
 
 extension ViewController : MoviePresenterDelegate{
     
     func onSuccessCallBack(model: [MovieModel]) {
         
-        if(!model.isEmpty){
-            movieModel = model
-            print(movieModel.count)
-            // Update UI
-            DispatchQueue.main.async {
-                
-                self.dismissActivityLoader()
-
-                self.movieCollectionView.reloadData()
-            }
+        isLoading = false
+        
+        movieModel += model
+        //print(movieModel.count)
+        // Update UI
+        DispatchQueue.main.async {
+            
+            self.dismissActivityLoader()
+            
+            self.movieCollectionView.reloadData()
         }
     }
     

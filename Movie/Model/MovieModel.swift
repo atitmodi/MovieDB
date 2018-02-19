@@ -11,7 +11,6 @@ import UIKit
 
 class MovieModel: NSObject {
     
-    
         var vote_count = 0
         var id = 0
         var video = false
@@ -35,17 +34,15 @@ class MovieModel: NSObject {
             if(poster_path != ""){
                poster_path = "https://image.tmdb.org/t/p/w500/\(poster_path)"
             }
-            else{
-                //poster_path = "http://laughshop.com/wp-content/uploads/2017/04/Hi-To-All-My-peeps.jpg"
-            }
             title = dic["title"] as? String ?? ""
             original_title = dic["original_title"] as? String ?? ""
             popularity = dic["popularity"] as? Double ?? 0.0
             vote_average = dic["vote_average"] as? Int ?? 0
             overview = dic["overview"] as? String ?? ""
             backdrop_path = dic["backdrop_path"] as? String ?? ""
-            
+            release_date = dic["release_date"] as? String ?? ""
         }
+    
     
 }
 

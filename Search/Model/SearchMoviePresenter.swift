@@ -32,18 +32,17 @@ class SearchMoviePresenter: NSObject {
     func getSearchApi(searchString : String){
 
     let searchUrl = URL(string: "\(Constants.BASE_URL)/search/movie?api_key=\(Constants.API_KEY_V3)&language=en-US&query=\(searchString)&include_adult=false")
-        //session.invalidateAndCancel()
 
         let config = URLSessionConfiguration.default
         session = URLSession(configuration: config)
+        
+        // downloading data
         session.dataTask(with: searchUrl!) { (data, response, error) in
             do{
                 if(error != nil)
                 {
                     //print("error is \(error)")
-                    
                     DispatchQueue.main.async {
-                        
                         CommonClass().showAlertView(errorMessage: error?.localizedDescription ?? "")
                         self.errorDelegate()
                         return
@@ -75,8 +74,9 @@ class SearchMoviePresenter: NSObject {
                             
                             if let delegate = self.delegate{
                                 
+                                // getting main queue to pass the data and update UI
                                 DispatchQueue.main.async {
-                                    
+                                    //passing data to controller
                                     delegate.onSuccessCallBack(model: self.movies)
 
                                 }
@@ -87,7 +87,6 @@ class SearchMoviePresenter: NSObject {
                 }
             }
             catch{
-                print("error")
                 print(error)
             }
             }.resume()

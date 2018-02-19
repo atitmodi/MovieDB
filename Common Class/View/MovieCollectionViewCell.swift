@@ -13,20 +13,19 @@ class MovieCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: CustomImageView!
     @IBOutlet weak var titleLabel: UILabel!
     
+    //setting data for collection view
     var model : MovieModel?{
         didSet{
-            do{
-                //imageView.image = try UIImage.init(data: .init(contentsOf: URL(string: (model?.poster_path)!)!))
-                if let poster_path = model?.poster_path{
-                    imageView.loadImageUsingUrlString(poster_path)
-                }
-                titleLabel.text = model?.title
+            
+            if let poster_path = model?.poster_path{
+                
+                //subclassing imageview to download image and adding to cache
+                //we can use SDWebImage library
+                imageView.loadImageUsingUrlString(poster_path)
             }
-            catch{
-                print(error)
-            }
+            titleLabel.text = model?.title
         }
+        
     }
-    
-    
 }
+    

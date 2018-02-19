@@ -20,10 +20,11 @@ class DetailScreenViewController: UIViewController {
     @IBOutlet weak var rating: UILabel!
     
     override func viewDidLoad() {
+        // Do any additional setup after loading the view.
+
         super.viewDidLoad()
         setLayout()
         
-        // Do any additional setup after loading the view.
     }
     
     func setLayout(){
@@ -40,7 +41,7 @@ class DetailScreenViewController: UIViewController {
     }
     
     func formatDate(dateString : String) -> String{
-        
+        // formatig date as required
         let dateFormatterGet = DateFormatter()
         dateFormatterGet.dateFormat = "yyyy-MM-dd"
         
@@ -52,7 +53,7 @@ class DetailScreenViewController: UIViewController {
             return dateFormatterSet.string(from: date! as Date)
         }
         
-        return ""
+        return " "
     }
 
 
